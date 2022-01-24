@@ -13,11 +13,10 @@ public class PracticeForm {
 
     @BeforeAll
     static void beforeAll() {
-        Configuration.browserSize = "1920x1080";
+        Configuration.startMaximized = true;
     }
 
     @Test
-    @Disabled
     void fillFromTest() {
         Selenide.open("https://demoqa.com/automation-practice-form");
         $("#firstName").setValue("Viktor");
