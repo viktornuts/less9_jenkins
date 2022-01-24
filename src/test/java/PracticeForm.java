@@ -13,7 +13,8 @@ public class PracticeForm {
 
     @BeforeAll
     static void beforeAll() {
-        Configuration.browserSize = "1920x1080";;
+        Configuration.browserSize = "1920x1080";
+        Configuration.browser = "Chrome";
     }
 
     @Test
