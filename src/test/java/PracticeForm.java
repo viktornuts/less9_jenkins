@@ -1,10 +1,19 @@
 import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import static com.codeborne.selenide.Selenide.$;
+
 
 import java.io.File;
+import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -13,46 +22,24 @@ public class PracticeForm {
     @BeforeAll
     static void beforeAll() {
         Configuration.startMaximized = true;
+        Configuration.browser = "Chrome";
     }
 
-    @Test
-    void fillFromTest() {
-        Selenide.open("https://demoqa.com/automation-practice-form");
-        $("#firstName").setValue("Viktor");
-        $("#lastName").setValue("Slon");
-        $("#userEmail").setValue("viktornuts@gmail.com");
-        $("[for='gender-radio-1']").click();
-        $("#userNumber").setValue("8955245541");
-
-        $("#dateOfBirthInput").click();
-        $("[class='react-datepicker__month-select']").selectOption("June");
-        $("[class='react-datepicker__year-select']").selectOption("1990");
-        $("[class*='react-datepicker__day--021']").click();
-
-        $("#subjectsInput").setValue("English").pressEnter();
-        $("#subjectsInput").setValue("Maths").pressEnter();
-
-        $("[for='hobbies-checkbox-1']").click();
-        $("[for='hobbies-checkbox-2']").click();
-
-        File lesson = new File("src/test/resources/lesson1.png");
-        String path = lesson.getAbsolutePath();
-        $("#uploadPicture").sendKeys(path);
-
-        $("[placeholder='Current Address']").setValue("Nikolaya Shishka 21");
-        $("[placeholder='Current Address']").scrollIntoView(true);
-        $("#react-select-3-input").setValue("Raj").pressEnter();
-        $("#react-select-4-input").setValue("Jaise").pressEnter();
-        $("#submit").click();
-
-        //Assert
-        $$x("//*[@class='modal-body']//td[2]").shouldHave(CollectionCondition.exactTexts(
-                "Viktor Slon", "viktornuts@gmail.com", "Male", "8955245541", "21 June,1990",
-                "English, Maths", "Sports, Reading", "lesson1.png", "Nikolaya Shishka 21", "Rajasthan Jaiselmer"));
+    static Stream<Arguments> commonSearchTestCsvSource() {
+        return Stream.of(
+                Arguments.of("89642483134", "Билайн"),
+                Arguments.of("89512333371", "МТС"),
+                Arguments.of("89049764432", "TELE2")
+        );
+    }
 
 
-        // $(".table-responsive").shouldHave(text("Viktor"), text("Slon"); как 1 из вариантов
-
-        // $(".table-responsive").$(byText("Student name")).parent().shouldHave(text("Slon"));
+    @MethodSource("commonSearchTestCsvSource")
+    @ParameterizedTest(name = "Тест проверят работу сервиса по определеню оператора по номеру телефона с данными: {0}")
+    void numberTest(String testData, String expected) {
+        Selenide.open("https://www.spravportal.ru/Services/PhoneCodes/MobilePhoneInfo.aspx");
+        $("input[name = 'ctl00$ctl00$cphMain$cphServiceMain$textNum']").setValue(testData);
+        $("input[type='submit']").click();
+        $("#lblOp").shouldHave(Condition.text(expected));
     }
 }

@@ -8,7 +8,7 @@ repositories {
 }
 
 def allureVersion = "2.17.2",
-    junitVersion = "5.7.2"
+    junitVersion = "5.8.2"
 
 
 group 'qa.guru.allure'
@@ -32,9 +32,10 @@ allure {
 
 dependencies {
     testImplementation(
-            "org.junit.jupiter:junit-jupiter-api:$junitVersion",
+            "org.junit.jupiter:junit-jupiter:$junitVersion",
             "io.qameta.allure:allure-selenide:$allureVersion",
-            "com.codeborne:selenide:5.25.0"
+            "com.codeborne:selenide:5.25.0",
+            'org.assertj:assertj-core:3.22.0'
     )
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
